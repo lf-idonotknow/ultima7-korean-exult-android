@@ -64,7 +64,7 @@ static void setAutoLaunch(bool autoLaunch) {
 }
 
 extern "C" JNIEXPORT int JNICALL ExultAndroid_main(int argc, char* argv[]) {
-    unsetenv("EXULT_DIAG_FD"); // v9 uses bounded Java pad diagnostics.
+    unsetenv("EXULT_DIAG_FD"); // Uses bounded Java pad diagnostics.
     auto env = static_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
     auto activity = static_cast<jobject>(SDL_AndroidGetActivity());
     auto cls = env->GetObjectClass(activity);

@@ -135,8 +135,8 @@ public class ExultLauncherActivity extends AppCompatActivity {
 
 		AlertDialog progressDialog
 				= new AlertDialog.Builder(this)
-						  .setTitle("Installing Korean game data")
-						  .setMessage("Preparing bundled content...")
+						  .setTitle("한글 패치 준비 중")
+						  .setMessage("필요한 한글 패치 파일을 설치하고 있습니다...")
 						  .setCancelable(false)
 						  .create();
 		progressDialog.show();
@@ -160,7 +160,7 @@ public class ExultLauncherActivity extends AppCompatActivity {
 						return;
 					}
 					new AlertDialog.Builder(this)
-							.setTitle("Korean game data installation failed")
+							.setTitle("한글 패치 설치 실패")
 							.setMessage(details)
 							.setPositiveButton("Dismiss", null)
 							.show();

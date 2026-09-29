@@ -15,7 +15,7 @@ final class KoreanDiagnostics {
     private static int bytes;
     private static boolean attempted;
     private static final long run=System.currentTimeMillis();
-    private static SharedPreferences prefs() {return context.getSharedPreferences("pad-diagnostics-v9",0);}
+    private static SharedPreferences prefs() {return context.getSharedPreferences("pad-diagnostics-v10",0);}
     private static OutputStream slot(String key,String name,String mime) throws IOException {
         String saved=prefs().getString(key,null);
         if(saved!=null)try {
@@ -35,8 +35,8 @@ final class KoreanDiagnostics {
         if(output!=null)output.close();output=null;
         int sequence=prefs().getInt("sequence",0),index=Math.floorMod(sequence,3);
         prefs().edit().putInt("sequence",sequence+1).apply();
-        output=slot("trace"+index,"pad-v9-"+index+".txt","text/plain");bytes=0;
-        byte[] header=("Exult Korean v9 run="+run+" segment="+sequence+" Android="+Build.VERSION.RELEASE+"\n"+
+        output=slot("trace"+index,"pad-v10-"+index+".txt","text/plain");bytes=0;
+        byte[] header=("Exult Korean v10 run="+run+" segment="+sequence+" Android="+Build.VERSION.RELEASE+"\n"+
             "INPUT=physical transition ACTION=emitted control ENGINE=consumer dispatch/result; no visual-success claim\n").getBytes(StandardCharsets.UTF_8);
         output.write(header);bytes=header.length;
     }
@@ -55,7 +55,7 @@ final class KoreanDiagnostics {
         if(Build.VERSION.SDK_INT<29)return -1;
         context=c.getApplicationContext();
         try {
-            rotate();record("START pad mapping v9");
+            rotate();record("START pad mapping v10");
             if(Build.VERSION.SDK_INT>=30) {
                 android.app.ActivityManager am=c.getSystemService(android.app.ActivityManager.class);
                 long previous=prefs().getLong("exitTime",0),latest=previous;int exported=0;
@@ -68,7 +68,7 @@ final class KoreanDiagnostics {
                         if(in!=null) {
                             int nslot=Math.floorMod(prefs().getInt("exitSequence",0),2);
                             prefs().edit().putInt("exitSequence",prefs().getInt("exitSequence",0)+1).apply();
-                            try(OutputStream save=slot("exit"+nslot,"pad-v9-exit-"+nslot+".bin","application/octet-stream")) {
+                            try(OutputStream save=slot("exit"+nslot,"pad-v10-exit-"+nslot+".bin","application/octet-stream")) {
                                 byte[] b=new byte[8192];int n,total=0;
                                 while(total<1024*1024 && (n=in.read(b,0,Math.min(b.length,1024*1024-total)))>0){save.write(b,0,n);total+=n;}
                                 record("EXIT_TRACE slot="+nslot+" time="+info.getTimestamp()+" bytes="+total);

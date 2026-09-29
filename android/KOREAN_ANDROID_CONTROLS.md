@@ -1,38 +1,34 @@
-# Android controller mapping
+# 안드로이드 게임패드 조작표
 
-| Control | Action |
+| 버튼 | 동작 |
 | --- | --- |
-| Left stick | Move the Avatar through Exult's existing controller path |
-| Right stick | Move the Exult mouse cursor |
-| R2 or A | Left click; hold while moving the right stick to drag |
-| R1 | Double left click (talk, open, use) |
-| L2 | Right click |
-| Hold L1 | Precision cursor speed |
-| B or Start | Escape / close / menu |
-| X | Inventory (`I`) |
-| Y | Toggle combat (`C`) |
-| D-pad up | Map (`M`) |
-| D-pad right | Spellbook (`B`) |
-| D-pad down | Statistics (`Z`) |
-| D-pad left or Select | Save/restore (`S`) |
-| L3 | Pause combat (Space) |
-| R3 | Center the cursor |
+| 왼쪽 스틱 | 캐릭터 이동 |
+| 오른쪽 스틱 | 화면의 Exult 마우스 커서 이동 |
+| R2 또는 A | 왼쪽 클릭, 누른 채 오른쪽 스틱을 움직이면 드래그 |
+| R1 | 왼쪽 더블 클릭(대화, 열기, 사용) |
+| L2 | 오른쪽 클릭 |
+| L1 누르기 | 커서를 천천히 정밀 이동 |
+| B 또는 Start | 취소, 창 닫기, 메뉴 |
+| X | 인벤토리(`I`) |
+| Y | 전투 모드 전환(`C`) |
+| 방향키 위 | 지도(`M`) |
+| 방향키 오른쪽 | 마법책(`B`) |
+| 방향키 아래 | 능력치(`Z`) |
+| 방향키 왼쪽 또는 Select | 저장/불러오기(`S`) |
+| L3 | 전투 일시정지(스페이스) |
+| R3 | 커서를 화면 가운데로 이동 |
 
-Shortcuts retain the original game's conditions. For example, an item shortcut
-does nothing when the required item is unavailable.
+단축키는 원작 게임의 조건을 그대로 따릅니다. 예를 들어 마법책을 아직 얻지
+않았다면 마법책 버튼을 눌러도 아무 동작을 하지 않습니다.
 
-## Diagnostics
+## 진단 기록
 
-Android writes controller diagnostics under
-`Download/Exult-Korean/diagnostics/`:
+게임패드 입력 기록은 안드로이드의
+`Download/Exult-Korean/diagnostics/` 폴더에 저장됩니다.
 
-- `pad-v9-0.txt` through `pad-v9-2.txt`: three rotating files, at most 256 KiB
-  each.
-- `pad-v9-exit-0.bin` and `pad-v9-exit-1.bin`: two rotating historical crash
-  traces, at most 1 MiB each.
+- `pad-v10-0.txt`부터 `pad-v10-2.txt`: 최대 256 KiB인 순환 기록 3개
+- `pad-v10-exit-0.bin`, `pad-v10-exit-1.bin`: 최대 1 MiB인 종료 기록 2개
 
-`INPUT` records the physical transition, `ACTION` the generated mouse or key
-event, and `ENGINE` the receiving Exult path. Stick motion is logged only when
-movement starts or stops, not every frame. A dispatch record proves that code
-ran; it does not by itself prove that the requested visible result was allowed
-by the current game state.
+`INPUT`은 실제 버튼 입력, `ACTION`은 생성된 마우스·키보드 동작, `ENGINE`은
+Exult 엔진이 입력을 받은 경로입니다. 스틱 이동은 움직임을 시작하거나 멈출
+때만 기록하므로 파일이 지나치게 커지지 않습니다.

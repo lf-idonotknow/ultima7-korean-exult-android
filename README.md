@@ -1,10 +1,35 @@
-# Badges
+# 울티마7 한글 패치용 Exult 안드로이드 개조판
 
-> **Korean Android fork:** This branch adds Korean text support, optional local
-> content installation, and physical gamepad controls for Android. See
-> [android/KOREAN_ANDROID.md](android/KOREAN_ANDROID.md) for build and content
-> requirements. Game data, translation archives, fonts, and APK binaries are
-> intentionally not included in this repository.
+이 저장소는 **울티마 7: 블랙 게이트**와 **울티마 7 파트 2: 서펜트 아일**의
+한글 패치를 안드로이드에서 실행하기 위해 Exult를 개조한 프로젝트입니다.
+한글 출력과 한글 이름 입력, 물리 게임패드 조작을 지원합니다.
+
+## 처음 사용하는 분을 위한 설치 순서
+
+1. [Releases](https://github.com/lf-idonotknow/ultima7-korean-exult-android/releases)에서
+   최신 ARM64 APK를 휴대전화나 게임기에 내려받습니다.
+2. 내려받은 APK를 눌러 설치합니다. 안드로이드가 차단하면 해당 파일 앱에만
+   **알 수 없는 앱 설치** 권한을 허용합니다.
+3. 앱을 실행한 뒤 위쪽의 **GAMES** 탭을 엽니다.
+4. 플레이할 게임 왼쪽의 항목을 누릅니다.
+   - 블랙 게이트: **The Black Gate + Forge of Virtue**
+   - 서펜트 아일: **The Serpent Isle + Silver Seed**
+5. 본인이 소유한 게임 설치 파일을 선택합니다. GOG판은 Mac용 오프라인 설치
+   파일(`.pkg`)을 바로 선택할 수 있고, `STATIC` 폴더를 담은 ZIP도 사용할 수
+   있습니다.
+6. 설치가 끝나 게임 이름 왼쪽에 초록색 체크 표시가 생기면 **MODS** 탭으로
+   이동합니다.
+7. **Black Gate 한글 실행 / 파일 복구** 또는
+   **Serpent Isle 한글 실행 / 파일 복구** 버튼을 누릅니다.
+
+게임 원본 데이터는 APK와 이 저장소에 포함되어 있지 않습니다. 이용자가 정품
+게임을 직접 준비해야 합니다. 자세한 설명과 문제 해결 방법은
+[안드로이드 설치 안내](android/KOREAN_ANDROID.md)를 참고하십시오.
+
+게임패드 버튼 배치는 [게임패드 조작표](android/KOREAN_ANDROID_CONTROLS.md)에
+정리되어 있습니다.
+
+## Exult 원본 프로젝트
 
 
 [![Chat on IRC][irc-badge]][irc-url]
