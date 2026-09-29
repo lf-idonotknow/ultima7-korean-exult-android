@@ -73,8 +73,10 @@ public class ExultActivity extends SDLActivity {
 	protected String[] getArguments() {
 		String game = getIntent().getStringExtra("koreanGame");
 		String mod = getIntent().getStringExtra("koreanMod");
-		if (("forgeofvirtue".equals(game) && "koreanbg".equals(mod))
-				|| ("silverseed".equals(game) && "koreansi".equals(mod))) {
+		if (("forgeofvirtue".equals(game)
+				&& (mod == null || "koreanbg".equals(mod)))
+				|| ("silverseed".equals(game)
+						&& (mod == null || "koreansi".equals(mod)))) {
 			return new String[] {"--game", game};
 		}
 		return super.getArguments();

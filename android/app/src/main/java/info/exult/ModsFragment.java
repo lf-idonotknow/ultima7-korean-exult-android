@@ -1,122 +1,150 @@
 /*
- *  Copyright (C) 2021-2025  The Exult Team
+ *  Copyright (C) 2021-2026  The Exult Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package info.exult;
 
-import android.util.Log;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class ModsFragment extends ContentInstallerFragment {
 	@Override
 	public void onViewCreated(View view, android.os.Bundle state) {
 		super.onViewCreated(view, state);
-		android.widget.LinearLayout layout = view.findViewById(R.id.contentLayout);
-		int position = 0;
-		if (BundledContentInstaller.hasAsset(requireContext(), "koreanbg.zip")) {
-			addKoreanMod(
-					layout, position, "forgeofvirtue", "koreanbg",
-					"Black Gate 한글");
-			position += 2;
-		}
-		if (BundledContentInstaller.hasAsset(requireContext(), "koreansi.zip")) {
-			addKoreanMod(
-					layout, position, "silverseed", "koreansi",
-					"Serpent Isle 한글");
-			position += 2;
-		}
-		if (position == 0) {
-			return;
-		}
-		android.view.ViewGroup parent = (android.view.ViewGroup)layout.getParent();
+		LinearLayout layout = view.findViewById(R.id.contentLayout);
+		addKoreanLaunch(
+				layout, 0, "forgeofvirtue", "koreanbg", "Black Gate 한글");
+		addKoreanLaunch(
+				layout, 2, "silverseed", "koreansi", "Serpent Isle 한글");
+
+		ViewGroup parent = (ViewGroup)layout.getParent();
 		int index = parent.indexOfChild(layout);
 		parent.removeView(layout);
-		android.widget.ScrollView scroll = new android.widget.ScrollView(requireContext());
+		ScrollView scroll = new ScrollView(requireContext());
 		scroll.addView(layout);
-		parent.addView(scroll, index, new android.widget.LinearLayout.LayoutParams(
-				android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-				android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+		parent.addView(
+				scroll, index,
+				new LinearLayout.LayoutParams(
+						ViewGroup.LayoutParams.WRAP_CONTENT,
+						ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 
-	private void addKoreanMod(android.widget.LinearLayout layout, int position,
-			String game, String mod, String title) {
-		android.content.Context context = requireContext().getApplicationContext();
-		android.widget.CheckBox status = new android.widget.CheckBox(requireContext());
-		status.setText(title + " · 파일 확인 중");
+	private void addKoreanLaunch(
+			LinearLayout layout, int position, String game, String bundledMod,
+			String title) {
+		Context context = requireContext().getApplicationContext();
+		CheckBox status = new CheckBox(requireContext());
 		status.setClickable(false);
-		android.widget.Button launch = new android.widget.Button(requireContext());
-		launch.setText(title + " 실행 / 파일 복구");
+		Button launch = new Button(requireContext());
+		launch.setText(title + " 실행");
 		launch.setAllCaps(false);
 		layout.addView(status, position);
 		layout.addView(launch, position + 1);
-		new Thread(() -> {
-			boolean valid = false;
-			String detail;
-			try {
-				valid = KoreanModFiles.check(context.getAssets().open("bundled-content/" + mod + ".zip"),
-						context.getFilesDir().toPath().resolve(game).resolve("mods"), mod, false);
-				detail = valid ? "파일 확인 완료" : "파일 복구 필요";
-			} catch (Exception e) { detail = "확인 실패: " + e.getMessage(); }
-			final boolean checked = valid;
-			final String label = detail;
-			status.post(() -> { status.setChecked(checked); status.setText(title + " · " + label); });
-		}, "Korean mod check").start();
+		refreshStatus(context, status, game, bundledMod, title);
+
 		launch.setOnClickListener(v -> {
 			launch.setEnabled(false);
-			status.setText(title + " · 검사 및 복구 중");
+			status.setText(title + " · 파일 검사 중");
 			new Thread(() -> {
 				try {
-					if (!KoreanModFiles.check(context.getAssets().open("bundled-content/" + mod + ".zip"),
-							context.getFilesDir().toPath().resolve(game).resolve("mods"), mod, true))
-						throw new java.io.IOException("파일 검증 실패");
+					boolean bundled = BundledContentInstaller.hasAsset(
+							context, bundledMod + ".zip");
+					if (bundled) {
+						if (!KoreanModFiles.check(
+								context.getAssets().open(
+										"bundled-content/" + bundledMod + ".zip"),
+								context.getFilesDir().toPath().resolve(game).resolve(
+										"mods"),
+								bundledMod, true)) {
+							throw new java.io.IOException("한글 모드 파일 검증 실패");
+						}
+					} else if (!KoreanPatchContent.isReady(context, game)) {
+						throw new java.io.IOException(
+								"아래에서 공통 한글 글꼴과 이 게임의 한글 패치를 먼저 설치하십시오");
+					}
 					launch.post(() -> {
 						launch.setEnabled(true);
 						status.setChecked(true);
 						status.setText(title + " · 파일 확인 완료");
-						if (!isAdded()) return;
-						android.content.Intent intent = new android.content.Intent(requireContext(), ExultActivity.class);
+						if (!isAdded()) {
+							return;
+						}
+						Intent intent = new Intent(requireContext(), ExultActivity.class);
 						intent.putExtra("koreanGame", game);
-						intent.putExtra("koreanMod", mod);
+						if (bundled) {
+							intent.putExtra("koreanMod", bundledMod);
+						}
 						ExultActivity.clearConsole();
 						startActivity(intent);
 					});
-				} catch (Exception e) {
-					launch.post(() -> { launch.setEnabled(true); status.setChecked(false);
-						status.setText(title + " · 실패: " + e.getMessage()); });
+				} catch (Exception exception) {
+					launch.post(() -> {
+						launch.setEnabled(true);
+						status.setChecked(false);
+						status.setText(title + " · " + exception.getMessage());
+					});
 				}
-			}, "Korean mod repair").start();
+			}, "Korean patch launch").start();
 		});
 	}
+
+	private void refreshStatus(
+			Context context, CheckBox status, String game, String bundledMod,
+			String title) {
+		new Thread(() -> {
+			boolean valid = KoreanPatchContent.isReady(context, game);
+			if (!valid && BundledContentInstaller.hasAsset(
+							 context, bundledMod + ".zip")) {
+				try {
+					valid = KoreanModFiles.check(
+							context.getAssets().open(
+									"bundled-content/" + bundledMod + ".zip"),
+							context.getFilesDir().toPath().resolve(game).resolve(
+									"mods"),
+							bundledMod, false);
+				} catch (Exception ignored) {
+					valid = false;
+				}
+			}
+			final boolean ready = valid;
+			status.post(() -> {
+				status.setChecked(ready);
+				status.setText(
+						title + (ready ? " · 파일 확인 완료" : " · 한글 패치 설치 필요"));
+			});
+		}, "Korean patch check").start();
+	}
+
 	ModsFragment() {
 		super(R.layout.mods_card, R.string.mods_card_text);
 	}
 
 	@Override
 	protected boolean shouldShowCustomModButton() {
-		return true;    // Only the mods fragment should show this button
+		return true;
 	}
 
 	@Override
 	protected ExultContent buildContentFromView(String name, View view) {
+		if (KoreanPatchContent.COMMON.equals(name)
+			|| KoreanPatchContent.BG.equals(name)
+			|| KoreanPatchContent.SI.equals(name)) {
+			return new KoreanPatchContent(name, view.getContext());
+		}
 		if ("customMod".equals(name)) {
-			// Create a placeholder that will be replaced later
 			return new ExultModContent("placeholder", name, getContext());
 		}
-
 		String game = (String)view.getTag(R.id.game);
 		return new ExultModContent(game, name, getContext());
 	}

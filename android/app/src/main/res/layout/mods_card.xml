@@ -27,6 +27,39 @@
             android:padding="40dp">
 
             <CheckBox
+                android:id="@+id/koreanCommonPatchCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="공통 한글 글꼴 설치">
+                <tag
+                    android:id="@+id/name"
+                    android:value="korean-common" />
+            </CheckBox>
+
+            <CheckBox
+                android:id="@+id/koreanBgPatchCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Black Gate 한글 패치 설치">
+                <tag
+                    android:id="@+id/name"
+                    android:value="korean-bg" />
+            </CheckBox>
+
+            <CheckBox
+                android:id="@+id/koreanSiPatchCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Serpent Isle 한글 패치 설치">
+                <tag
+                    android:id="@+id/name"
+                    android:value="korean-si" />
+            </CheckBox>
+
+            <CheckBox
                 android:id="@+id/keyringCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

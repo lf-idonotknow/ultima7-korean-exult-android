@@ -108,7 +108,7 @@ public abstract class ContentInstallerFragment
 				// Add custom mod button
 				Button customModButton = new Button(
 						getContext(), null, android.R.attr.buttonStyle);
-				customModButton.setText("Install Custom Mod");
+				customModButton.setText("기타 Exult 모드 설치");
 				customModButton.setOnClickListener(
 						v -> launchCustomModFilePicker());
 
@@ -394,6 +394,9 @@ public abstract class ContentInstallerFragment
 			} catch (Exception e) {
 				Log.d("ExultLauncherActivity",
 					  "exception opening content: " + e.toString());
+				handleContentDone(
+						requestCode, false,
+						e.getMessage() == null ? e.toString() : e.getMessage());
 			}
 		}).start();
 	}

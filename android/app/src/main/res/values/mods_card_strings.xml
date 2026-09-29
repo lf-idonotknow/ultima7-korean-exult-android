@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="mods_card_text"><![CDATA[
-    <p>
-      Exult can optionally make use of mods that change the original games or add entirely new content. This android port is currently set up to make use of the three mods maintained by the Exult project, the excellent Ultima VI remake and Glimmerscape. You can either have this launcher download the mods from our download page and install it, or browse to the <a href="https://exult.info/download.php">Exult Downloads page</a> and download the mods you are interested in.
-    </p>
-    <p>
-      After you have downloaded the .zip file(s), you can tap the corresponding checkboxes on the left. These will open a file browser which you can use to select the archive(s) you downloaded, and the installer will take care of extracting the required data files and installing them in the correct places.
-    </p>
-    <p>
-      Once you have successfully installed the mod(s), you are free to delete the .zip files; they will no longer be needed or used by Exult after installation.
-    </p>
-    <p>
-      If you wish to install a mod that is not listed on the left hand side, click the "INSTALL CUSTOM MODS" button. But be aware that these cannot be uninstalled from the launcher.
-    </p>
+    <p><b>한글 패치는 APK에 들어 있지 않습니다.</b> 이용자가 가지고 있는 패치 파일을 직접 지정해야 합니다.</p>
+    <ol>
+      <li><b>공통 한글 글꼴 설치</b>를 누르고 Exult 공통 patch 폴더를 압축한 ZIP을 선택합니다.</li>
+      <li>플레이할 게임의 <b>한글 패치 설치</b>를 누르고 해당 게임 patch 폴더의 ZIP을 선택합니다.</li>
+      <li>위쪽의 <b>한글 실행</b> 버튼을 누릅니다.</li>
+    </ol>
+    <p>ZIP 안에 patch 폴더 자체가 들어 있어도 되고, patch 폴더의 파일만 바로 들어 있어도 됩니다. 설치가 끝난 ZIP은 기기에서 지워도 됩니다.</p>
+    <p>아래의 나머지 항목은 Exult용 선택 모드입니다. 한글판 실행에 필요하지 않습니다.</p>
   ]]></string>
 </resources>
