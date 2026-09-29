@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="공통 한글 글꼴 설치">
+                android:text="Exult 공통 patch 폴더 설치">
                 <tag
                     android:id="@+id/name"
                     android:value="korean-common" />

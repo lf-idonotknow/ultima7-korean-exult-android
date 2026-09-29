@@ -3,7 +3,7 @@
   <string name="mods_card_text"><![CDATA[
     <p><b>한글 패치는 APK에 들어 있지 않습니다.</b> 이용자가 가지고 있는 패치 파일을 직접 지정해야 합니다.</p>
     <ol>
-      <li><b>공통 한글 글꼴 설치</b>를 누르고 Exult 공통 patch 폴더를 압축한 ZIP을 선택합니다.</li>
+      <li><b>Exult 공통 patch 폴더 설치</b>를 누릅니다. PC 한글판에서 <code>Exult.exe</code>와 같은 위치에 있는 <code>patch</code> 폴더(<code>EXULTMSG.TXT</code>, <code>FONT*.FNT</code> 포함)를 ZIP으로 압축한 파일을 선택합니다. 별도의 "한글 글꼴 ZIP"을 뜻하는 것이 아닙니다.</li>
       <li>플레이할 게임의 <b>한글 패치 설치</b>를 누르고 해당 게임 patch 폴더의 ZIP을 선택합니다.</li>
       <li>위쪽의 <b>한글 실행</b> 버튼을 누릅니다.</li>
     </ol>

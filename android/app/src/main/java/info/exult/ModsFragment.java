@@ -71,7 +71,7 @@ public class ModsFragment extends ContentInstallerFragment {
 						}
 					} else if (!KoreanPatchContent.isReady(context, game)) {
 						throw new java.io.IOException(
-								"아래에서 공통 한글 글꼴과 이 게임의 한글 패치를 먼저 설치하십시오");
+								"아래에서 Exult.exe 옆의 공통 patch 폴더 ZIP과 이 게임의 한글 패치를 먼저 설치하십시오");
 					}
 					launch.post(() -> {
 						launch.setEnabled(true);

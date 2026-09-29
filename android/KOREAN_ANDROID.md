@@ -12,7 +12,7 @@
   - 7-1: Ultima VII: The Black Gate + Forge of Virtue
   - 7-2: Ultima VII Part 2: Serpent Isle + Silver Seed
 - 해당 게임의 PC용 한글 패치
-- 한글 패치와 함께 배포된 Exult 공통 한글 글꼴 파일
+- PC 한글판 `Exult.exe` 옆의 공통 `patch` 폴더
 
 ## 파일 준비
 
@@ -23,10 +23,21 @@ GOG판은 게임 페이지에서 받은 **Mac용 오프라인 설치 파일(`.pk
 ZIP으로 압축합니다. ZIP 안에 `STATIC/INITGAME.DAT`, `STATIC/SHAPES.VGA`가
 보여야 합니다.
 
-### 공통 한글 글꼴
+### Exult 공통 patch 폴더
 
-PC 한글판 Exult의 실행 폴더에 있는 `patch` 폴더를 ZIP으로 압축합니다. 다음
-파일들이 들어 있어야 합니다.
+PC 한글판에서 `Exult.exe`와 같은 위치에 있는 `patch` 폴더를 말합니다. 별도로
+배포되는 "한글 글꼴 ZIP"이 있는 것이 아닙니다. 이 `patch` 폴더를 통째로
+ZIP으로 압축합니다. 다음 파일들이 들어 있어야 합니다.
+
+```text
+PC 한글판 Exult 폴더/
+├─ Exult.exe
+└─ patch/                 ← 이 폴더를 ZIP으로 압축
+   ├─ EXULTMSG.TXT
+   ├─ FONT0BG.FNT
+   ├─ FONT0SI.FNT
+   └─ 그 밖의 FONT*.FNT
+```
 
 - `EXULTMSG.TXT`
 - `FONT0BG.FNT`, `FONT0SI.FNT`
@@ -65,7 +76,8 @@ ZIP 안에 `patch` 폴더가 들어 있어도 되고, 해당 파일들이 ZIP의
 ## 2단계: 한글 패치 설치
 
 1. **MODS** 탭을 누릅니다.
-2. **공통 한글 글꼴 설치**를 누르고 준비한 공통 글꼴 ZIP을 선택합니다.
+2. **Exult 공통 patch 폴더 설치**를 누르고 `Exult.exe` 옆의 `patch` 폴더를
+   압축한 ZIP을 선택합니다.
 3. 7-1은 **Black Gate 한글 패치 설치**, 7-2는
    **Serpent Isle 한글 패치 설치**를 눌러 해당 ZIP을 선택합니다.
 4. 선택한 항목 왼쪽에 초록색 체크가 생기는지 확인합니다.
@@ -77,7 +89,8 @@ ZIP 내부의 폴더 이름과 대소문자는 달라도 괜찮습니다. 앱은
 ## 3단계: 한글판 실행
 
 MODS 탭 위쪽의 **Black Gate 한글 실행** 또는 **Serpent Isle 한글 실행**을
-누릅니다. 앱은 실행 직전에 공통 글꼴과 게임별 필수 패치 파일을 다시 검사합니다.
+누릅니다. 앱은 실행 직전에 Exult 공통 patch 파일과 게임별 필수 패치 파일을
+다시 검사합니다.
 파일이 빠졌으면 어떤 패치를 먼저 설치해야 하는지 화면에 표시합니다.
 
 일반 **LAUNCHER** 탭에서 실행할 수도 있지만, 처음에는 MODS 탭의 한글 실행
@@ -92,13 +105,14 @@ MODS 탭 위쪽의 **Black Gate 한글 실행** 또는 **Serpent Isle 한글 실
 
 ### 한글 패치가 “Invalid/unrecognized archive”라고 나옵니다
 
-잘못된 종류의 ZIP을 선택한 것입니다. 공통 글꼴 ZIP에는 `FONT0BG.FNT`, 7-1
-패치에는 `ENDSHAPE.FLX`, 7-2 패치에는 `SCHEDULE.DAT`가 있어야 합니다.
+잘못된 종류의 ZIP을 선택한 것입니다. Exult 공통 patch ZIP에는 `FONT0BG.FNT`,
+7-1 패치에는 `ENDSHAPE.FLX`, 7-2 패치에는 `SCHEDULE.DAT`가 있어야 합니다.
 
 ### 한글 실행 버튼이 “한글 패치 설치 필요”라고 표시합니다
 
-공통 한글 글꼴과 해당 게임의 한글 패치를 모두 설치했는지 확인하십시오. 체크가
-되어 있어도 파일을 다른 앱에서 지웠다면 항목을 해제했다가 다시 설치하십시오.
+Exult 공통 patch 폴더와 해당 게임의 한글 패치를 모두 설치했는지 확인하십시오.
+체크가 되어 있어도 파일을 다른 앱에서 지웠다면 항목을 해제했다가 다시
+설치하십시오.
 
 ### 게임 진입 중 앱이 종료됩니다
 

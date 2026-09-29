@@ -36,7 +36,7 @@ final class KoreanDiagnostics {
         int sequence=prefs().getInt("sequence",0),index=Math.floorMod(sequence,3);
         prefs().edit().putInt("sequence",sequence+1).apply();
         output=slot("trace"+index,"pad-v10-"+index+".txt","text/plain");bytes=0;
-        byte[] header=("Exult Korean v10 run="+run+" segment="+sequence+" Android="+Build.VERSION.RELEASE+"\n"+
+        byte[] header=("Exult Korean v11 run="+run+" segment="+sequence+" Android="+Build.VERSION.RELEASE+"\n"+
             "INPUT=physical transition ACTION=emitted control ENGINE=consumer dispatch/result; no visual-success claim\n").getBytes(StandardCharsets.UTF_8);
         output.write(header);bytes=header.length;
     }
