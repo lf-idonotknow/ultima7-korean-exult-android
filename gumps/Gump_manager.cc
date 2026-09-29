@@ -22,6 +22,8 @@
 #	include <config.h>
 #endif
 
+#include "korean/padtrace.h"
+
 #include "Gump_manager.h"
 
 #include "Actor_gump.h"
@@ -516,6 +518,9 @@ static Gump_Base::MouseButton SDL_MouseButton_to_Gump(Uint8 sdlbutton) {
 }
 
 bool Gump_manager::handle_modal_gump_event(Modal_gump* gump, SDL_Event& event) {
+    if ((event.type==SDL_MOUSEBUTTONDOWN || event.type==SDL_MOUSEBUTTONUP) && event.button.which!=EXSDL_TOUCH_MOUSEID)
+        korean_pad_log("modal mouse button=%d state=%d screen=%d,%d",event.button.button,event.button.state,event.button.x,event.button.y);
+    if(event.type==SDL_KEYDOWN) korean_pad_log("modal key=%d dispatch",event.key.keysym.sym);
 	//  Game_window *gwin = Game_window::get_instance();
 	// int scale_factor = gwin->get_fastmouse() ? 1
 	//          : gwin->get_win()->get_scale();

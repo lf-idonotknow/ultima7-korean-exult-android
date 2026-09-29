@@ -17,6 +17,7 @@
  */
 
 #include "korean.h"
+#include "diagnostics.h"
 
 #include "ibuf8.h"
 #include "files/databuf.h"
@@ -32,6 +33,7 @@ KoreanFont::KoreanFont() : _pal() {
 }
 
 bool KoreanFont::load(const std::string& fontName) {
+    KoreanTrace trace("font-load", fontName.c_str());
 	IFileDataSource ifs(File_spec(fontName.c_str()));
 
 	uint16 glyphCount;
@@ -93,6 +95,9 @@ bool KoreanFont::load(const std::string& fontName) {
 		return false;
 	}
 
+#ifdef ANDROID
+    if(korean_diag_fd()>=0) dprintf(korean_diag_fd(), "FONT loaded glyphs=%u bitmap=%ux%u height=%d magic=%08x\n", glyphCount, _bitmapWidth, _bitmapHeight, _height, magic);
+#endif
 	return true;
 }
 
@@ -105,6 +110,7 @@ KoreanFont::~KoreanFont() {
 }
 
 int KoreanFont::drawGlyph(Image_buffer8* dst, uint16 codepoint, int dx, int dy, unsigned char *trans) {
+	KoreanTrace trace("glyph-draw");
 	if (!_fontPtr)
 		return 0;
 

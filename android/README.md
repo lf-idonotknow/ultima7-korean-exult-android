@@ -1,5 +1,8 @@
 # Exult instructions for Android
 
+The Korean Android fork and its controller mapping are documented in
+[KOREAN_ANDROID.md](KOREAN_ANDROID.md).
+
 ## To Play
 First you need to get Ultima VII: The Black Gate or Ultima VII Part 2: Serpent Isle. Either you own it already, or you buy it somewhere.
 

@@ -21,6 +21,8 @@
 #	include <config.h>
 #endif
 
+#include "korean/padtrace.h"
+
 #include "exult.h"
 #include "font.h"
 #include "gamewin.h"
@@ -385,6 +387,7 @@ int MenuList::handle_events(Game_window* gwin, Mouse* mouse) {
 					mouse_updated = false;
 				}
 			} else if (event.type == SDL_MOUSEBUTTONUP) {
+                if(event.button.which!=EXSDL_TOUCH_MOUSEID) korean_pad_log("menu click screen=%d,%d",event.button.x,event.button.y);
 				gwin->get_win()->screen_to_game(
 						event.button.x, event.button.y, gwin->get_fastmouse(),
 						gx, gy);

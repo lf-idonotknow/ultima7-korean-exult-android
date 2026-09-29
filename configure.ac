@@ -682,6 +682,17 @@ if test x$enable_zip_support = xyes ; then
 	# else
 	if test x$enable_static_libs = xno -o x$ARCH != xmacosx; then
 		PKG_CHECK_MODULES(ZLIB, zlib, have_zlib=yes, have_zlib=no)
+		# The Android NDK ships zlib without a pkg-config file.
+		case "$host" in
+			*-android*)
+				AC_CHECK_HEADER([zlib.h], [
+					AC_CHECK_LIB([z], [inflate], [have_zlib=yes; ZLIB_LIBS="-lz"])
+				])
+				if test x$have_zlib != xyes; then
+					AC_MSG_ERROR([Android Korean initial-game archives require zlib])
+				fi
+				;;
+		esac
 	else
 		have_zlib=yes
 	fi

@@ -312,6 +312,10 @@ gitinfo.h
 android/app/build.gradle
 android/app/src/main/res/drawable/*.png
 
+# Locally supplied proprietary game/translation content
+/local-assets/
+/android/app/src/main/assets/bundled-content/
+
 #files in data that should not be in git
 data/exult_studio.glade
 /data/music

@@ -10,7 +10,7 @@
         android:shortcutDisabledMessage="@string/shortcut_launcher_disabledmessage">
         <intent
             android:action="android.intent.action.EDIT"
-            android:targetPackage="info.exult"
+            android:targetPackage="info.exult.korean"
             android:targetClass="info.exult.ExultLauncherActivity" />
 
     </shortcut>

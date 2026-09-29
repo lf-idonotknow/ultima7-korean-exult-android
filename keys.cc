@@ -30,6 +30,8 @@
 #	pragma GCC diagnostic pop
 #endif    // __GNUC__
 
+#include "korean/padtrace.h"
+
 #include "Scroll_gump.h"
 #include "U7file.h"
 #include "actors.h"
@@ -363,28 +365,35 @@ void KeyBinder::AddKeyBinding(
 }
 
 bool KeyBinder::DoAction(const ActionType& a, bool press) const {
+    if (press) korean_pad_log("key action=%s request params=%d,%d",a.action->s,a.params[0],a.params[1]);
+
 	if (!cheat()
 		&& (a.action->key_type == Action::cheat_keys
 			|| a.action->key_type == Action::mapedit_keys)) {
+		if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 		return true;
 	}
 	if (a.action->game != NONE && a.action->game != Game::get_game_type()) {
+		if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 		return true;
 	}
 
 	// Restrict key actions in dont_move mode
 	if (!a.action->allow_during_dont_move
 		&& Game_window::get_instance()->main_actor_dont_move()) {
+		if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 		return true;
 	}
 
 	// Restrict keys if avatar is sleeping/paralyzed/unconscious/dead
 	if (!a.action->allow_if_cant_act
 		&& !Game_window::get_instance()->main_actor_can_act()) {
+		if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 		return true;
 	}
 	if (!a.action->allow_if_cant_act_charmed
 		&& !Game_window::get_instance()->main_actor_can_act_charmed()) {
+		if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 		return true;
 	}
 	if (press) {
@@ -409,14 +418,18 @@ bool KeyBinder::DoAction(const ActionType& a, bool press) const {
 			} while (scroll->show_next_page());
 			Game_window::get_instance()->paint();
 			delete scroll;
+			if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 			return true;
 		}
 #endif
+		korean_pad_log("key action=%s dispatch",a.action->s);
 		a.action->func(a.params);
+		korean_pad_log("key action=%s returned",a.action->s);
 	} else {
 #ifndef USE_EXULTSTUDIO
 		// Do nothing when releasing mapedit keys if no ES support.
 		if (a.action->key_type == Action::mapedit_keys) {
+			if (press) korean_pad_log("key action=%s blocked by game state/availability",a.action->s);
 			return true;
 		}
 #endif

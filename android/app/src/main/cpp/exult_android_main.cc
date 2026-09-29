@@ -24,6 +24,9 @@
 #include <jni.h>
 
 #include <iostream>
+#include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
 
 /// Partial class of GameDisplayOptions_gump to give access to static method
 /// SetAndroidAutoLaunchFPtrs
@@ -61,6 +64,21 @@ static void setAutoLaunch(bool autoLaunch) {
 }
 
 extern "C" JNIEXPORT int JNICALL ExultAndroid_main(int argc, char* argv[]) {
+    unsetenv("EXULT_DIAG_FD"); // v9 uses bounded Java pad diagnostics.
+    auto env = static_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
+    auto activity = static_cast<jobject>(SDL_AndroidGetActivity());
+    auto cls = env->GetObjectClass(activity);
+    auto method = env->GetMethodID(cls, "getDiagnosticFd", "()I");
+    int fd = env->CallIntMethod(activity, method);
+    if (env->ExceptionCheck()) { env->ExceptionDescribe(); env->ExceptionClear(); fd=-1; }
+    if (fd>=0) {
+        char value[32]; snprintf(value,sizeof(value),"%d",fd);
+        setenv("EXULT_DIAG_FD",value,1);
+        dprintf(fd,"ENGINE START argc=%d\n",argc);
+        for(int i=0;i<argc;i++) dprintf(fd,"ARG %s\n",argv[i]);
+    }
+    env->DeleteLocalRef(cls);
+    env->DeleteLocalRef(activity);
 	AndroidLog_streambuf exult_cout(ANDROID_LOG_DEBUG, "exult-android-wrapper");
 	AndroidLog_streambuf exult_cerr(ANDROID_LOG_ERROR, "exult-android-wrapper");
 	auto*                ndk_cout = std::cout.rdbuf(&exult_cout);

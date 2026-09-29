@@ -39,6 +39,46 @@ import org.libsdl.app.SDLActivity;
  * Android.
  */
 public class ExultActivity extends SDLActivity {
+    private AndroidPad pad;
+    public android.view.View padSurface() {return mSurface;}
+    public static void logPadEffect(String message) {KoreanDiagnostics.record("ENGINE "+message);}
+    @Override public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        return pad!=null && pad.key(event) || super.dispatchKeyEvent(event);
+    }
+    @Override public boolean dispatchGenericMotionEvent(android.view.MotionEvent event) {
+        if(pad!=null)pad.motion(event);
+        return super.dispatchGenericMotionEvent(event); // Keep native left-stick movement.
+    }
+    @Override public boolean dispatchTouchEvent(android.view.MotionEvent event) {
+        if(pad!=null)pad.touch(event);
+        return super.dispatchTouchEvent(event);
+    }
+    @Override public void onWindowFocusChanged(boolean focus) {
+        if(!focus && pad!=null)pad.pause("focus lost");
+        super.onWindowFocusChanged(focus);
+        if(focus && pad!=null)pad.resume();
+    }
+    @Override protected void onPause() {
+        if(pad!=null)pad.pause("activity paused");
+        super.onPause();
+    }
+    @Override protected void onResume() {
+        super.onResume();if(pad!=null && hasWindowFocus())pad.resume();
+    }
+    @Override protected void onDestroy() {
+        if(pad!=null)pad.destroy();super.onDestroy();
+    }
+    public int getDiagnosticFd() { return KoreanDiagnostics.open(this); }
+	@Override
+	protected String[] getArguments() {
+		String game = getIntent().getStringExtra("koreanGame");
+		String mod = getIntent().getStringExtra("koreanMod");
+		if (("forgeofvirtue".equals(game) && "koreanbg".equals(mod))
+				|| ("silverseed".equals(game) && "koreansi".equals(mod))) {
+			return new String[] {"--game", game};
+		}
+		return super.getArguments();
+	}
 	// Making this static for easy access from UI fragments, but it feels a bit
 	// hacky.
 	private static String m_consoleLog;
@@ -60,9 +100,16 @@ public class ExultActivity extends SDLActivity {
 	 */
 	public void writeToConsole(String message) {
 		if (message != null) {
-			m_consoleLog += message + "\n";
+            if (m_consoleLog == null) m_consoleLog = "";
+            m_consoleLog += message + "\n";
+            if (m_consoleLog.length() > 262144)
+                m_consoleLog = m_consoleLog.substring(m_consoleLog.length() - 131072);
 		}
 	}
+
+    public void writeToConsoleBytes(byte[] bytes) {
+        if (bytes != null) writeToConsole(KoreanLogText.decode(bytes));
+    }
 
 	public static ExultActivity instance() {
 		return m_instance;
@@ -138,34 +185,36 @@ public class ExultActivity extends SDLActivity {
 
 	public native void sendEscapeKeypress();
 
-	public native void setName(String name);
+    public native void setName(byte[] name);
 
-	public void promptForName(String name) {
-		runOnUiThread(() -> {
-			Context             context     = getContext();
-			AlertDialog.Builder nameBuilder = new AlertDialog.Builder(context);
-			nameBuilder.setTitle("Name");
-			EditText nameEditText = new EditText(context);
-			nameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-			nameBuilder.setView(nameEditText);
-			nameBuilder.setPositiveButton(
-					"OK", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							setName(nameEditText.getText().toString());
-						}
-					});
-			nameBuilder.setNegativeButton(
-					"Cancel", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-
-			nameBuilder.show();
-		});
-	}
+    public void promptForNameBytes(byte[] name) {
+        final String current = KoreanLogText.decode(name);
+        runOnUiThread(() -> {
+            EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setSingleLine(true);
+            input.setText(current);
+            input.setSelection(input.length());
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("캐릭터 이름")
+                    .setMessage("한글 최대 8자 / 영문 최대 16자 (혼합 가능)")
+                    .setView(input)
+                    .setPositiveButton("확인", null)
+                    .setNegativeButton("취소", (d, which) -> d.cancel())
+                    .create();
+            dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setOnClickListener(v -> {
+                        try {
+                            byte[] encoded = KoreanNameText.encode(input.getText().toString());
+                            setName(encoded);
+                            dialog.dismiss();
+                        } catch (IllegalArgumentException error) {
+                            input.setError(error.getMessage());
+                        }
+                    }));
+            dialog.show();
+        });
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +227,9 @@ public class ExultActivity extends SDLActivity {
 						  .LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
 
 		m_instance = this;
+        KoreanDiagnostics.open(this);
+        pad = new AndroidPad(this);
+        if(hasWindowFocus())pad.resume();
 
 		m_escTextView = new TextView(this);
 		m_escTextView.setBackground(getResources().getDrawable(R.drawable.btn));

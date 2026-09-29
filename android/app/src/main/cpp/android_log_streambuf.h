@@ -56,11 +56,11 @@ private:
 
 	/// The Activity to use for routing logs to UI. This can only be used on
 	/// jnithread
-	jobject m_exultActivityObject;
+	jobject m_exultActivityObject = nullptr;
 
 	/// The Method to use for routing logs to UI. This can only be used on
 	/// jnithread
-	jmethodID m_writeToConsoleMethod;
+	jmethodID m_writeToConsoleMethod = nullptr;
 
 	/// The id of the thread used to access jni
 	std::thread::id jnithread;

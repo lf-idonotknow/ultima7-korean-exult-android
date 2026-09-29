@@ -31,6 +31,10 @@ endif
 EXULTSOURCES =	\
 	actions.cc	\
 	actions.h	\
+	korean/korean.cc \
+	korean/korean.h \
+	korean/ucs2kstable.cc \
+	korean/ucs2kstable.h \
 	actorio.cc	\
 	actors.cc	\
 	actors.h	\

@@ -31,6 +31,7 @@
 #include "game.h"
 
 #include "korean/korean.h"
+#include "korean/diagnostics.h"
 
 using std::size_t;
 using std::string;
@@ -114,6 +115,7 @@ int Font::paint_text_box(
 		bool         center,               // Center each line.
 		Cursor_info* cursor                // We set x, y if not nullptr.
 ) {
+    KoreanTrace trace("paint_text_box", text, -1);
 	const char* start = text;    // Remember the start.
 	int         clipy = y;
 	if (clipy >= 2) {
@@ -293,6 +295,7 @@ int Font::paint_text(
 		const char*    text,    // What to draw, 0-delimited.
 		int xoff, int yoff,     // Upper-left corner of where to start.
 		unsigned char* trans) {
+    KoreanTrace trace("paint_text", text, -1);
 	ignore_unused_variable_warning(win);
 	printf("Font::paint_text() type 1: %s\n", text);
 	int x = xoff;
@@ -337,6 +340,7 @@ int Font::paint_text(
 		int            textlen,    // Length of text.
 		int xoff, int yoff         // Upper-left corner of where to start.
 ) {
+    KoreanTrace trace("paint_text", text, textlen);
 	ignore_unused_variable_warning(win);
 	printf("Font::paint_text() type 2: %d %s\n", textlen, text);
 	int x = xoff;
@@ -520,6 +524,7 @@ int Font::paint_text_fixedwidth(
 		int xoff, int yoff,     // Upper-left corner of where to start.
 		int width               // Width of each character
 ) {
+    KoreanTrace trace("paint_text_fixedwidth", text, -1);
 	ignore_unused_variable_warning(win);
 	printf("Font::paint_text_fixedwidth() type 2: %s\n", text);
 	int x = xoff;
@@ -566,6 +571,7 @@ int Font::paint_text_fixedwidth(
 		int xoff, int yoff,        // Upper-left corner of where to start.
 		int width                  // Width of each character
 ) {
+    KoreanTrace trace("paint_text_fixedwidth", text, textlen);
 	ignore_unused_variable_warning(win);
 	printf("Font::paint_text_fixedwidth() type 3: %s\n", text);
 	int w;
@@ -603,6 +609,7 @@ int Font::paint_text_fixedwidth(
  */
 
 int Font::get_text_width(const char* text) {
+    KoreanTrace trace("get_text_width", text, -1);
 	int width = 0;
 	if (font_shapes) {
 		bool useKoreanFont = ContainsKoreanText(text);
@@ -633,6 +640,7 @@ int Font::get_text_width(
 		const char* text,
 		int         textlen    // Length of text.
 ) {
+    KoreanTrace trace("get_text_width", text, textlen);
 	int width = 0;
 	if (font_shapes) {
 		bool useKoreanFont = ContainsKoreanText(text);

@@ -18,6 +18,7 @@
 
 package info.exult;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +41,7 @@ public class ExultLauncherActivity extends AppCompatActivity {
 	// when the Activity is returning from a launch versus being opened and
 	// eligible to auto-launch.
 	private boolean m_launched = false;
+	private boolean m_bundledContentInstallStarted = false;
 
 	@Override
 	public void onResume() {
@@ -47,6 +49,9 @@ public class ExultLauncherActivity extends AppCompatActivity {
 		Intent intent = getIntent();
 		String action = (intent != null) ? intent.getAction() : "";
 		super.onResume();
+		if (BundledContentInstaller.needsInstall(this)) {
+			return;
+		}
 		// Only allow auto launch if intent was MAIN action
 		if (Objects.equals(action, Intent.ACTION_MAIN) && getAutoLaunch()) {
 			if (!m_launched) {
@@ -88,6 +93,7 @@ public class ExultLauncherActivity extends AppCompatActivity {
 		EdgeToEdge.enable(this);
 
 		super.onCreate(savedInstanceState);
+        KoreanDiagnostics.open(this);
 		setContentView(R.layout.activity_main);
 
 		// hiding system bars
@@ -116,5 +122,48 @@ public class ExultLauncherActivity extends AppCompatActivity {
 					}
 				})
 				.attach();
+
+		installBundledContentIfNeeded();
+	}
+
+	private void installBundledContentIfNeeded() {
+		if (m_bundledContentInstallStarted
+			|| !BundledContentInstaller.needsInstall(this)) {
+			return;
+		}
+		m_bundledContentInstallStarted = true;
+
+		AlertDialog progressDialog
+				= new AlertDialog.Builder(this)
+						  .setTitle("Installing Korean game data")
+						  .setMessage("Preparing bundled content...")
+						  .setCancelable(false)
+						  .create();
+		progressDialog.show();
+
+		BundledContentInstaller.installAsync(
+				this,
+				(packageName, stage, file) -> runOnUiThread(() -> {
+					String message = packageName;
+					if (stage != null) {
+						message += "\n" + stage;
+					}
+					if (file != null) {
+						message += "\n" + file;
+					}
+					progressDialog.setMessage(message);
+				}),
+				(successful, details) -> runOnUiThread(() -> {
+					progressDialog.dismiss();
+					if (successful) {
+						recreate();
+						return;
+					}
+					new AlertDialog.Builder(this)
+							.setTitle("Korean game data installation failed")
+							.setMessage(details)
+							.setPositiveButton("Dismiss", null)
+							.show();
+				}));
 	}
 }

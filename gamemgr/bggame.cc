@@ -20,6 +20,9 @@
 #	include <config.h>
 #endif
 
+#include "mouse.h"
+#include "korean/padtrace.h"
+
 #include "bggame.h"
 
 #include "Audio.h"
@@ -2243,6 +2246,9 @@ bool BG_Game::new_game(Vga_file& shapes) {
 
 	do {
 		Delay();
+#ifdef ANDROID
+        if(Mouse::mouse) Mouse::mouse->hide();
+#endif
 		if (redraw) {
 			gwin->clear_screen();
 			sman->paint_shape(
@@ -2289,6 +2295,17 @@ bool BG_Game::new_game(Vga_file& shapes) {
 		}
 
 		while (SDL_PollEvent(&event)) {
+#ifdef ANDROID
+            if(event.type==SDL_MOUSEMOTION && Mouse::mouse) {
+                if(event.motion.which!=SDL_TOUCH_MOUSEID) Mouse::use_touch_input=false;
+                int mx,my;
+                gwin->get_win()->screen_to_game(event.motion.x,event.motion.y,gwin->get_fastmouse(),mx,my);
+                Mouse::mouse->move(mx,my);Mouse::mouse->set_shape(Mouse::hand);
+            }
+            if(event.type==SDL_FINGERDOWN) Mouse::use_touch_input=true;
+            if(event.type==SDL_MOUSEBUTTONUP && event.button.which!=SDL_TOUCH_MOUSEID)
+                korean_pad_log("name-screen click screen=%d,%d",event.button.x,event.button.y);
+#endif
 			if (event.type == SDL_MOUSEBUTTONDOWN
 				|| event.type == SDL_MOUSEBUTTONUP) {
 				const SDL_Rect rectName   = {topx + 10, menuy + 10, 130, 16};
@@ -2473,7 +2490,13 @@ bool BG_Game::new_game(Vga_file& shapes) {
 				}
 			}
 		}
-	} while (editing);
+#ifdef ANDROID
+        if(Mouse::mouse) {Mouse::mouse->show();Mouse::mouse->blit_dirty();}
+#endif
+    } while (editing);
+#ifdef ANDROID
+    if(Mouse::mouse) Mouse::mouse->hide();
+#endif
 
 	gwin->clear_screen();
 

@@ -12,12 +12,12 @@ android {
     ndkVersion "@ANDROID_NDK_VERSION@"
 
     defaultConfig {
-        applicationId "info.exult"
+        applicationId "info.exult.korean"
         namespace 'info.exult'
         minSdkVersion 28 // could lower to 18 if we locally implement glob()
         targetSdkVersion @ANDROID_SDK_VERSION@
-        versionCode 1
-        versionName "@VERSION@ (" + getGitCommitId() + ")"
+        versionCode 9
+        versionName "@VERSION@ Korean v9 (" + getGitCommitId() + ")"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -27,6 +27,18 @@ android {
         }
         ndk {
             @ANDROID_ARCHITECTURE@
+        }
+    }
+
+    sourceSets {
+        main {
+            if (project.hasProperty('KOREAN_ASSET_ROOT')) {
+                assets.srcDir project.getProperty('KOREAN_ASSET_ROOT')
+            }
+        }
+        test {
+            java.srcDir project.getProperty('EXULT_SOURCE_DIR') +
+                    '/android/app/src/test/java'
         }
     }
 

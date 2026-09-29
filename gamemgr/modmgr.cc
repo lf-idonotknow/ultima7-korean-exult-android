@@ -342,6 +342,12 @@ ModManager::ModManager(
 		config_path = base_cfg_path + "/path";
 		default_dir = get_system_path("<GAMEHOME>") + "/" + cfgname;
 		config->value(config_path.c_str(), game_path, default_dir.c_str());
+#ifdef ANDROID
+        // SDL resolves relative paths internally; minizip and mkdir do not.
+        if (!game_path.empty() && game_path.front() != '/') {
+            game_path = get_system_path("<HOME>") + "/" + game_path;
+        }
+#endif
 
 		// <static_path> setting: default is "$game_path/static".
 		config_path = base_cfg_path + "/static_path";
@@ -559,6 +565,15 @@ ModManager::ModManager(
 		config_path = base_cfg_path + "/patch";
 		default_dir = game_path + "/patch";
 		config->value(config_path.c_str(), patch_dir, default_dir.c_str());
+#ifdef ANDROID
+        // Preserve PC Korean patch semantics, including original-game initialization.
+        const string korean_mod = cfgname == "forgeofvirtue" ? "koreanbg"
+                : cfgname == "silverseed" ? "koreansi" : "";
+        if (!korean_mod.empty()) {
+            const string korean_patch = game_path + "/mods/" + korean_mod + "/data";
+            if (U7exists(korean_patch + "/usecode")) patch_dir = korean_patch;
+        }
+#endif
 		add_system_path("<" + path_prefix + "_PATCH>", patch_dir);
 
 		// <source> setting: default is "$game_path/source".

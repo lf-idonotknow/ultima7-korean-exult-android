@@ -24,6 +24,7 @@
 #include <SDL_system.h>
 
 #include <cmath>
+#include <cstring>
 #include <iostream>
 
 extern "C" JNIEXPORT void JNICALL
@@ -47,11 +48,16 @@ extern "C" JNIEXPORT void JNICALL
 }
 
 extern "C" JNIEXPORT void JNICALL Java_info_exult_ExultActivity_setName(
-		JNIEnv* env, jobject self, jstring javaName) {
-	ignore_unused_variable_warning(self);
-	const char* name = env->GetStringUTFChars(javaName, nullptr);
-	TouchUI::onTextInput(name);
-	env->ReleaseStringUTFChars(javaName, name);
+        JNIEnv* env, jobject self, jbyteArray javaName) {
+    ignore_unused_variable_warning(self);
+    if (!javaName) return;
+    const auto length = env->GetArrayLength(javaName);
+    if (length > 16) return;
+    char name[17] = {};
+    env->GetByteArrayRegion(javaName, 0, length, reinterpret_cast<jbyte*>(name));
+    if (env->ExceptionCheck()) return;
+    // Java validates MS949 and the 16-byte save-game limit before dispatch.
+    TouchUI::onTextInput(name);
 }
 
 TouchUI_Android* TouchUI_Android::m_instance = nullptr;
@@ -92,7 +98,7 @@ TouchUI_Android::TouchUI_Android() {
 	m_hideButtonControlsMethod
 			= m_jniEnv->GetMethodID(jclass, "hideButtonControls", "()V");
 	m_promptForNameMethod = m_jniEnv->GetMethodID(
-			jclass, "promptForName", "(Ljava/lang/String;)V");
+			jclass, "promptForNameBytes", "([B)V");
 
 	int joystickDeviceIndex = SDL_JoystickAttachVirtual(
 			SDL_JOYSTICK_TYPE_GAMECONTROLLER, SDL_CONTROLLER_AXIS_MAX,
@@ -124,9 +130,16 @@ TouchUI_Android::~TouchUI_Android() {
 }
 
 void TouchUI_Android::promptForName(const char* name) {
-	auto* javaName = m_jniEnv->NewStringUTF(name);
-	m_jniEnv->CallVoidMethod(
-			m_exultActivityObject, m_promptForNameMethod, javaName);
+    const auto length = static_cast<jsize>(std::strlen(name));
+    auto javaName = m_jniEnv->NewByteArray(length);
+    if (!javaName) return;
+    m_jniEnv->SetByteArrayRegion(
+            javaName, 0, length, reinterpret_cast<const jbyte*>(name));
+    if (!m_jniEnv->ExceptionCheck()) {
+        m_jniEnv->CallVoidMethod(
+                m_exultActivityObject, m_promptForNameMethod, javaName);
+    }
+    m_jniEnv->DeleteLocalRef(javaName);
 }
 
 void TouchUI_Android::showGameControls() {

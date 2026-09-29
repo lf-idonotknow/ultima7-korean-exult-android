@@ -1,5 +1,11 @@
 # Badges
 
+> **Korean Android fork:** This branch adds Korean text support, optional local
+> content installation, and physical gamepad controls for Android. See
+> [android/KOREAN_ANDROID.md](android/KOREAN_ANDROID.md) for build and content
+> requirements. Game data, translation archives, fonts, and APK binaries are
+> intentionally not included in this repository.
+
 
 [![Chat on IRC][irc-badge]][irc-url]
 

@@ -26,6 +26,8 @@
 #	include <config.h>
 #endif
 
+#include "korean/padtrace.h"
+
 #include "exult.h"
 
 #include "Audio.h"
@@ -1385,6 +1387,9 @@ static inline bool LostFocus(SDL_Event& event) {
  */
 
 static void Handle_event(SDL_Event& event) {
+    if ((event.type==SDL_MOUSEBUTTONDOWN || event.type==SDL_MOUSEBUTTONUP) && event.button.which!=EXSDL_TOUCH_MOUSEID) {
+        korean_pad_log("game mouse button=%d state=%d screen=%d,%d",event.button.button,event.button.state,event.button.x,event.button.y);
+    }
 	// Mouse scale factor
 	const bool dont_move_mode = gwin->main_actor_dont_move();
 	const bool avatar_can_act = gwin->main_actor_can_act();
@@ -1689,6 +1694,7 @@ static void Handle_event(SDL_Event& event) {
 			bool         click_handled = false;
 			if (dragging) {
 				click_handled = gwin->drop_dragged(x, y, dragged);
+                korean_pad_log("game drop game=%d,%d dragged=%d handled=%d",x,y,dragged,click_handled);
 				Mouse::mouse->set_speed_cursor();
 			}
 			if (g_shortcutBar && g_shortcutBar->handle_event(&event)) {
@@ -1701,7 +1707,8 @@ static void Handle_event(SDL_Event& event) {
 				dragging = dragged = false;
 				// This function handles the trouble of deciding what to
 				// do when the avatar cannot act.
-				gwin->double_clicked(x, y);
+				korean_pad_log("game double-click dispatch game=%d,%d",x,y);
+			gwin->double_clicked(x, y);
 				Mouse::mouse->set_speed_cursor();
 				show_items_clicked = false;
 				break;
@@ -1738,6 +1745,7 @@ static void Handle_event(SDL_Event& event) {
 		break;
 	}
 	case SDL_MOUSEMOTION: {
+                if(event.motion.which!=EXSDL_TOUCH_MOUSEID) Mouse::use_touch_input=false;
 		int mx;
 		int my;
 		if (Mouse::use_touch_input
@@ -1821,6 +1829,8 @@ static void Handle_event(SDL_Event& event) {
 		if (GainedFocus(event)) {
 			gwin->get_focus();
 		} else if (LostFocus(event)) {
+            joy_aim_x = joy_aim_y = 0;
+            gwin->stop_actor();
 			gwin->lose_focus();
 		}
 		break;
@@ -1999,6 +2009,7 @@ static bool Get_click(
 							*chr = 0;
 						}
 						g_waiting_for_click = false;
+                        korean_pad_log("wait-click selected game=%d,%d",x,y);
 						return true;
 					}
 				} else if (event.button.button == 3) {
@@ -2012,6 +2023,7 @@ static bool Get_click(
 				}
 				break;
 			case SDL_MOUSEMOTION: {
+                if(event.motion.which!=EXSDL_TOUCH_MOUSEID) Mouse::use_touch_input=false;
 				int mx;
 				int my;
 				gwin->get_win()->screen_to_game(
@@ -2067,6 +2079,8 @@ static bool Get_click(
 				if (GainedFocus(event)) {
 					gwin->get_focus();
 				} else if (LostFocus(event)) {
+            joy_aim_x = joy_aim_y = 0;
+            gwin->stop_actor();
 					gwin->lose_focus();
 				}
 			}
@@ -2254,6 +2268,7 @@ void Wizard_eye(long msecs    // Length of time in milliseconds.
 				break;
 			}
 			case SDL_MOUSEMOTION: {
+                if(event.motion.which!=EXSDL_TOUCH_MOUSEID) Mouse::use_touch_input=false;
 				int mx;
 				int my;
 				gwin->get_win()->screen_to_game(

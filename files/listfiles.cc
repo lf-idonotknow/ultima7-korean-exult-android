@@ -166,12 +166,17 @@ static int U7ListFilesImp(const std::string& path, FileList& files,bool quiet) {
 
 int U7ListFiles(const std::string& mask, FileList& files, bool quiet) {
 	string path(get_system_path(mask));
+	const size_t initial_file_count = files.size();
 	int    result = U7ListFilesImp(path, files,quiet);
 #	ifdef ANDROID
 	// TODO: If SDL ever adds directory traversal to rwops use it instead of
 	// glob() so that we pick up platform-specific paths and behaviors like
 	// this.
-	if (result != 0) {
+	// U7ListFilesImp returns success for GLOB_NOMATCH, so also retry when the
+	// first lookup added no files. Android game and mod content lives below
+	// SDL_AndroidGetInternalStoragePath(), while the configured path can be
+	// relative to the process working directory.
+	if (result != 0 || files.size() == initial_file_count) {
 		result = U7ListFilesImp(
 				SDL_AndroidGetInternalStoragePath() + ("/" + path), files,quiet);
 	}
